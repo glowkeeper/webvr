@@ -85,10 +85,7 @@ function App() {
   const setXR = async (scene) => {   
 
     const env = scene.createDefaultEnvironment();
-    const xrHelper = await WebXRDefaultExperience.CreateAsync(scene, {
-      floorMeshes: [env.ground],
-      optionalFeatures: true,
-    })
+    const xrHelper = await WebXRDefaultExperience.CreateAsync(scene)
 
     if (!xrHelper.baseExperience) {
       
@@ -97,6 +94,14 @@ function App() {
     } else {
 
       console.log("xr support! Good to go!")
+
+      const featuresManager = xr.baseExperience.featuresManager; // or any other way to get a features manager
+      featuresManager.enableFeature(WebXRFeatureName.TELEPORTATION, "stable" /* or latest */, {
+        xrInput: xr.input,
+        // add options here
+        floorMeshes: [env.ground],
+        optionalFeatures: true
+      });
     }
   }
 
