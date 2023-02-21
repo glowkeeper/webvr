@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-//import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera.js'
+import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera.js'
 import { FreeCamera } from '@babylonjs/core/Cameras/freeCamera.js'
 import { Color3 } from '@babylonjs/core/Maths/math.color.js'
 import { Engine } from '@babylonjs/core/Engines/engine.js'
@@ -13,7 +13,7 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial.js'
 import { Vector3 } from '@babylonjs/core/Maths/math.vector.js'
 import { WebXRDefaultExperience } from '@babylonjs/core/XR/webXRDefaultExperience.js'
 import { WebXRExperienceHelper } from '@babylonjs/core/XR/webXRExperienceHelper.js'
-
+import { WebXRFeatureName } from '@babylonjs/core/XR/webXRFeaturesManager.js'
 import "@babylonjs/core/Helpers/sceneHelpers";
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader'
 // import { DefaultLoadingScreen } from '@babylonjs/core/Loading/loadingScreen';
@@ -49,8 +49,12 @@ function App() {
 
   const createCamera = (canvas, scene) => {
 
-    const camera = new FreeCamera("camera1", new Vector3(0, 5, -10), scene);
-    camera.setTarget(Vector3.Zero());
+    /*const camera = new FreeCamera("camera1", new Vector3(0, 5, -10), scene);
+    camera.setTarget(Vector3.Zero());*/
+    const camera = new ArcRotateCamera("Camera", 0, 0, 10, new Vector3(0, 0, 0), scene)
+    // Positions the camera overwriting alpha, beta, radius
+    camera.setPosition(new Vector3(0, 0, 20))
+
     camera.attachControl(canvas, true);
 
     return camera
@@ -84,10 +88,10 @@ function App() {
 
   const setXR = async (scene) => {   
 
-    const env = scene.createDefaultEnvironment();
-    const xrHelper = await WebXRDefaultExperience.CreateAsync(scene)
+    //const env = scene.createDefaultEnvironment();
+    const xr = await WebXRDefaultExperience.CreateAsync(scene)
 
-    if (!xrHelper.baseExperience) {
+    if (!xr.baseExperience) {
       
       console.log("no xr support")
     
@@ -99,7 +103,7 @@ function App() {
       featuresManager.enableFeature(WebXRFeatureName.TELEPORTATION, "stable" /* or latest */, {
         xrInput: xr.input,
         // add options here
-        floorMeshes: [env.ground],
+        //floorMeshes: [env.ground],
         optionalFeatures: true
       });
     }
@@ -141,7 +145,7 @@ function App() {
   return (
     <div className="App">
       <div>
-        <h1>Design Studio</h1>
+        <h1>WebXR Design Studio</h1>
         <canvas
           id="myCanvas"
           width="1024"
